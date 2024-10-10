@@ -1,8 +1,8 @@
 package org.example;
 
-import org.example.Util.*;
+import org.example.Model.*;
+import org.example.util.comprobaciones;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -14,25 +14,17 @@ public class Main {
 
         try {
             do {
-                System.out.println("-------------- \n " +
-                        "Elige opción:\n " +
-                        "1. Abrir una nueva cuenta \n " +
-                        "2. Ver un listado de las cuentas abiertas \n " +
-                        "3. Obtener los datos de una cuenta concreta \n " +
-                        "4. Realizar un ingreso en una cuenta \n " +
-                        "5. Retirar efectivo de una cuenta \n " +
-                        "6. Consultar el saldo actual de una cuenta \n " +
-                        "7. Salir de la aplicación ");
+                System.out.println("-------------- \n " + "Elige opción:\n " + "1. Abrir una nueva cuenta \n " + "2. Ver un listado de las cuentas abiertas \n " + "3. Obtener los datos de una cuenta concreta \n " + "4. Realizar un ingreso en una cuenta \n " + "5. Retirar efectivo de una cuenta \n " + "6. Consultar el saldo actual de una cuenta \n " + "7. Salir de la aplicación ");
                 opcion = sc.nextInt();
 
-                sc.nextLine(); //evito que me de error tras haber introducido un valor numérico y posteriormente un String
+                sc.nextLine(); //evito que me da error tras haber introducido un valor numérico y posteriormente un String
 
                 switch (opcion) {
                     case 1: //abrir cuenta
                         abrirNuevaCuenta(banco, sc);
                         break;
                     case 2: //listado cuentas abiertas
-                        verListadoCuentas(banco);
+                        banco.listarCuentas();
                         break;
                     case 3: //datos de una cuenta
                         obtenerDatosCuenta(banco, sc);
@@ -61,139 +53,123 @@ public class Main {
 
 
     //MÉTODOS
-    // método para abrir una nueva cuenta bancaria
+    //método para abrir una nueva cuenta bancaria
     private static void abrirNuevaCuenta(Banco banco, Scanner sc) {
-        System.out.println("--- Abrir nueva cuenta ---");
+        System.out.println("- Abrir nueva cuenta -");
         System.out.print("Ingrese el nombre del titular: ");
         String nombre = sc.nextLine();
         System.out.print("Ingrese los apellidos del titular: ");
         String apellidos = sc.nextLine();
         System.out.print("Ingrese el DNI del titular: ");
         String dni = sc.nextLine();
+        if(!comprobaciones.validarDni(dni)){
+            System.out.println("El DNI del titular no es valido.");
+            return;
+        } else System.out.println("El DNI del titular es correcto.");
         Persona titular = new Persona(nombre, apellidos, dni);
 
-        System.out.println("Seleccione el tipo de cuenta:");
-        System.out.println("1. Cuenta de Ahorro");
-        System.out.println("2. Cuenta Corriente Personal");
-        System.out.println("3. Cuenta Corriente Empresa");
-        int tipoCuenta = sc.nextInt();
-        sc.nextLine(); // limpiar el buffer
-
-        System.out.print("Ingrese el saldo inicial: ");
-        double saldoInicial = sc.nextDouble();
-        sc.nextLine(); // limpiar el buffer
-
-        System.out.print("Ingrese el IBAN de la cuenta: ");
-        String iban = sc.nextLine();
-
-        CuentaBancaria nuevaCuenta = null;
-
-        switch (tipoCuenta) {
-            case 1:
-                System.out.print("Ingrese el tipo de interés anual: ");
-                double interes = sc.nextDouble();
-                nuevaCuenta = new CuentaAhorro(titular, iban, saldoInicial, interes);
-                break;
-            case 2:
-                System.out.print("Ingrese las entidades autorizadas (separadas por comas): ");
-                String entidades = sc.nextLine();
-                System.out.print("Ingrese la comisión de mantenimiento: ");
-                double comision = sc.nextDouble();
-                nuevaCuenta = new CuentaCorrientePersonal(titular, iban, saldoInicial, entidades, comision);
-                break;
-            case 3:
-                System.out.print("Ingrese las entidades autorizadas (separadas por comas): ");
-                String entidadesEmpresa = sc.nextLine();
-                System.out.print("Ingrese el máximo descubierto permitido: ");
-                double maxDescubierto = sc.nextDouble();
-                System.out.print("Ingrese el tipo de interés por descubierto: ");
-                double interesDescubierto = sc.nextDouble();
-                System.out.print("Ingrese la comisión fija por descubierto: ");
-                double comisionDescubierto = sc.nextDouble();
-                nuevaCuenta = new CuentaCorrienteEmpresa(titular, iban, saldoInicial, entidadesEmpresa, maxDescubierto, interesDescubierto, comisionDescubierto);
-                break;
-            default:
-                System.out.println("Tipo de cuenta no válido.");
+        try {
+            System.out.print("Ingrese el IBAN (debe comenzar con 'ES' y tener 20 caracteres): ");
+            String iban = sc.nextLine();
+            if(!comprobaciones.validarIban(iban)){
+                System.out.println("IBAN no válido.");
                 return;
-        }//switch
+            } else System.out.println("IBAN válido.");
 
-        if (banco.abrirCuenta(nuevaCuenta)) {
-            System.out.println("Cuenta abierta con éxito.");
-        } else {
-            System.out.println("Error al abrir la cuenta.");
-        }
+            System.out.println("Seleccione el tipo de cuenta que quiere abrir:");
+            System.out.println("1. Cuenta de ahorro \n" + "2. Cuenta corriente personal \n" + "3. Cuenta corriente empresa");
+            int tipoCuenta = sc.nextInt();
+            sc.nextLine();
+
+            System.out.print("Ingrese el saldo inicial que tendrá la cuenta: ");
+            double saldoInicial = sc.nextDouble();
+            sc.nextLine();
+            comprobaciones.comprobacionSaldoPositivo(sc, saldoInicial); //compruebo que sea positivo
+
+            CuentaBancaria nuevaCuenta; //creo un objeto de tipo CuentaBancaria para posteriormente rellenarlo con los datos del titular
+
+            switch (tipoCuenta) { //dependiendo del tipo de cuenta que quiera abrir el usuario, pedirá unos datos u otros
+                case 1: //cuenta de ahorro
+                    System.out.print("Ingrese el tipo de interés anual: ");
+                    double interes = sc.nextDouble();
+                    comprobaciones.comprobacionInteresPositivo(sc, interes); //compruebo que sea positivo
+                    nuevaCuenta = new CuentaAhorro(titular, iban, saldoInicial, interes); //creo la nueva cuenta con los datos introducidos
+                    break;
+                case 2: //CC personal
+                    System.out.print("Ingrese las entidades autorizadas (separadas por comas): ");
+                    String entidades = sc.nextLine();
+                    System.out.print("Ingrese la comisión de mantenimiento: ");
+                    double comision = sc.nextDouble();
+                    comprobaciones.comprobacionComisionPositiva(sc, comision); //compruebo que sea positivo
+                    nuevaCuenta = new CuentaCorrientePersonal(titular, iban, saldoInicial, entidades, comision); //creo la nueva cuenta con los datos introducidos
+                    break;
+                case 3: //CC empresa
+                    System.out.print("Ingrese las entidades autorizadas (separadas por comas): ");
+                    String entidadesEmpresa = sc.nextLine();
+                    System.out.print("Ingrese el máximo descubierto permitido: "); //crédito que ofrece el banco como saldo adicional en una cuenta
+                    double maxDescubierto = sc.nextDouble();
+                    comprobaciones.comprobacionComisionPositiva(sc, maxDescubierto); //compruebo que sea positiva
+                    System.out.print("Ingrese el tipo de interés por descubierto: "); //cantidad que se cobra al deudor por no pagar una deuda a tiempo
+                    double interesDescubierto = sc.nextDouble();
+                    comprobaciones.comprobacionInteresPositivo(sc, interesDescubierto); //compruebo que sea positivo
+                    System.out.print("Ingrese la comisión fija por descubierto: "); //cantidad que se paga a la entidad financiera por estar en números rojos
+                    double comisionDescubierto = sc.nextDouble();
+                    comprobaciones.comprobacionComisionPositiva(sc, comisionDescubierto); //compruebo que sea positiva
+                    nuevaCuenta = new CuentaCorrienteEmpresa(titular, iban, saldoInicial, entidadesEmpresa, maxDescubierto, interesDescubierto, comisionDescubierto); //creo la nueva cuenta con los datos introducidos
+                    break;
+                default:
+                    System.out.println("Tipo de cuenta no válido. Inténtelo de nuevo.");
+                    return;
+            }//switch
+
+            banco.abrirCuenta(nuevaCuenta); //llamo al método para que compruebe todos los datos introducidos y abra la cuenta o saque error de apertura
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }//try-catch
     }//abrirNuevaCuenta
-
-    // método para ver el listado de cuentas
-    private static void verListadoCuentas(Banco banco) {
-        System.out.println("--- Listado de cuentas ---");
-        List<String> cuentas = banco.listadoCuentas();
-        if (cuentas.isEmpty()) {
-            System.out.println("No hay cuentas disponibles.");
-        } else {
-            for (String cuentaInfo : cuentas) {
-                System.out.println(cuentaInfo);
-            }//for
-        }//else
-    }//verListadoCuentas
 
 
     //método para obtener los datos de una cuenta específica
     private static void obtenerDatosCuenta(Banco banco, Scanner sc) {
-        System.out.println("--- Obtener datos de una cuenta ---");
+        System.out.println("- Obtener datos de una cuenta -");
         System.out.print("Ingrese el IBAN de la cuenta: ");
         String iban = sc.nextLine();
-        String infoCuenta = banco.informacionCuenta(iban);
-        if (infoCuenta != null) {
-            System.out.println(infoCuenta);
-        } else {
-            System.out.println("Cuenta no encontrada.");
-        }
+        banco.obtenerDatosCuenta(iban); //llamo al método que imprime los datos
     }//obtenerDatosCuenta
 
 
-    // método para realizar un ingreso en una cuenta
+    //método para realizar un ingreso en una cuenta
     private static void realizarIngreso(Banco banco, Scanner sc) {
-        System.out.println("--- Realizar ingreso ---");
+        System.out.println("- Realizar ingreso -");
         System.out.print("Ingrese el IBAN de la cuenta: ");
         String iban = sc.nextLine();
-        System.out.print("Ingrese la cantidad a ingresar: ");
+        System.out.print("Introduzca la cantidad que quiere ingresar: ");
         double cantidad = sc.nextDouble();
 
-        if (banco.ingresoCuenta(iban, cantidad)) {
-            System.out.println("Ingreso realizado con éxito.");
-        } else {
-            System.out.println("Error al realizar el ingreso. Verifique el IBAN.");
-        }
+        banco.realizarIngreso(iban, cantidad); //llamo al método que maneja el ingreso
     }//realizarIngreso
 
 
     //método para retirar efectivo de una cuenta
     private static void retirarEfectivo(Banco banco, Scanner sc) {
-        System.out.println("--- Retirar efectivo ---");
+        System.out.println("- Retirar efectivo -");
         System.out.print("Ingrese el IBAN de la cuenta: ");
         String iban = sc.nextLine();
-        System.out.print("Ingrese la cantidad a retirar: ");
+        System.out.print("Ingrese la cantidad que desea retirar: ");
         double cantidad = sc.nextDouble();
 
-        if (banco.retiradaCuenta(iban, cantidad)) {
-            System.out.println("Retirada realizada con éxito.");
-        } else {
-            System.out.println("Error al realizar la retirada. Verifique el saldo o el IBAN.");
-        }
+        banco.retirarEfectivo(iban, cantidad); //llamo al método que maneja la retirada
     }//retirarEfectivo
 
 
     //método para consultar el saldo de una cuenta
     private static void consultarSaldo(Banco banco, Scanner sc) {
-        System.out.println("--- Consultar saldo ---");
+        System.out.println("- Consultar saldo -");
         System.out.print("Ingrese el IBAN de la cuenta: ");
         String iban = sc.nextLine();
-        double saldo = banco.obtenerSaldo(iban);
-        if (saldo >= 0) {
-            System.out.println("El saldo actual de la cuenta es: " + saldo + " euros.");
-        } else {
-            System.out.println("Cuenta no encontrada.");
-        }
+        double saldo = banco.obtenerSaldo(iban); //obtengo el saldo de la cuenta que tiene el IBAN introducido
+
+        //mensaje según si el saldo es válido o cuenta no encontrada
+        System.out.println(saldo >= 0 ? "El saldo actual de la cuenta es: " + saldo + " euros." : "Cuenta no encontrada.");
     }//consultarSaldo
 }//class

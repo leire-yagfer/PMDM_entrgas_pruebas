@@ -1,4 +1,4 @@
-package org.example.Util;
+package org.example.Model;
 
 //clase abstracta que hereda de CuentaBancaria
 public abstract class CuentaCorriente extends CuentaBancaria {

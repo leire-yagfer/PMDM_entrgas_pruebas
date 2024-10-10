@@ -1,4 +1,4 @@
-package org.example.Util;
+package org.example.Model;
 
 //clase que hereda de CuentaBancaria
 public class CuentaAhorro extends CuentaBancaria {
@@ -17,8 +17,6 @@ public class CuentaAhorro extends CuentaBancaria {
     //método que añado al haber heredado la clase CuentaBancaria
     @Override
     public String devolverInfoString() {
-        return "Cuenta Ahorro - " + getTitular().devolverInfoString() +
-                ", IBAN: " + getIban() + ", Saldo: " + getSaldo() +
-                ", Interés: " + tipoInteres + "%";
+        return "  -Cuenta Ahorro. Titular: " + getTitular().devolverInfoString() + ", IBAN: " + getIban() + ", Saldo: " + getSaldo() + ", Interés: " + tipoInteres + "%";
     }//devolverInfoString
 }//class

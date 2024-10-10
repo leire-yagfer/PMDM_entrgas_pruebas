@@ -1,4 +1,4 @@
-package org.example.Util;
+package org.example.Model;
 
 //clase que hereda de CuentaCorriente
 public class CuentaCorrientePersonal extends CuentaCorriente {
@@ -12,12 +12,9 @@ public class CuentaCorrientePersonal extends CuentaCorriente {
 
 
     //MÉTODOS
-    //método que añado al haber heredado la clase CuentaCorriente
+    //método que añado al haber heredado la clase CuentaCorriente --> contiene los datos de la cuenta
     @Override
     public String devolverInfoString() {
-        return "Cuenta Corriente Personal - " + getTitular().devolverInfoString() +
-                ", IBAN: " + getIban() + ", Saldo: " + getSaldo() +
-                ", Entidades autorizadas: " + getEntidadesAutorizadas() +
-                ", Comisión de mantenimiento: " + comisionMantenimiento;
+        return "  -Cuenta Corriente Personal. Titular: " + getTitular().devolverInfoString() + ", IBAN: " + getIban() + ", saldo: " + getSaldo() + ", entidades autorizadas: " + getEntidadesAutorizadas() + ", comisión de mantenimiento: " + comisionMantenimiento;
     }//devolverInfoString
 }//class
