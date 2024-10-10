@@ -1,29 +1,61 @@
 package org.example.Util;
 
-//clase abstracta porque tiene un par de clases que heredan datos almacenados en esta clase
-public abstract class CuentaBancaria {
-
-   /* Titular de la cuenta (un objeto de la clase Persona, la cual contendrá información sobre
-            el titular: nombre, apellidos y DNI).
-            • Saldo actual de la cuenta (número real).
-            • Número de cuenta (IBAN).
-            • Tipo de interés anual (si se trata de una cuenta de ahorro).
-            • Lista de entidades autorizadas para cobrar recibos de la cuenta (si se trata de
-            una cuenta corriente).
-            • Comisión de mantenimiento (para el caso de una cuenta corriente personal).
-            • Tipo de interés por descubierto (si es una cuenta corriente de empresa).
-            • Máximo descubierto permitido (si se trata de una cuenta corriente de empresa)
-
-*/
-
+//clase abstracta cuenta bancaria --> heredan los tipos de cuenta (ahorro y corriente)
+public abstract class CuentaBancaria implements Imprimible {
 
     //ATRIBUTOS
-    Persona titular = new Persona();
+    private Persona titular;
+    private String iban;
     private double saldo;
-    private String numCuenta;
 
 
     //CONSTRUCTOR
+    public CuentaBancaria(Persona titular, String iban, double saldoInicial) {
+        this.titular = titular;
+        this.iban = iban;
+        this.saldo = saldoInicial;
+    }
+
 
     //GET Y SET
-}
+    public Persona getTitular() {
+        return titular;
+    }
+
+    public String getIban() {
+        return iban;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+
+    //MÉTODOS
+    //método para depositar dinero en la cuenta
+    public void depositar(double cantidad) {
+        if (cantidad > 0) {
+            saldo += cantidad;
+        }
+    }//depositar
+
+
+    //método para retirar dinero de la cuenta
+    public boolean retirar(double cantidad) {
+        if (cantidad > 0 && saldo >= cantidad) {
+            saldo -= cantidad;
+            return true;
+        }
+        return false;
+    }//retirar
+
+
+    //método para obtener el saldo actual de la cuenta
+    public double obtenerSaldo() {
+        return saldo;
+    }//obtenerSaldo
+
+
+    //método abstracto que deberá ser implementado por las clases hijas
+    public abstract String devolverInfoString();
+}//class
