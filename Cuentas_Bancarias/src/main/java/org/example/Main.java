@@ -65,7 +65,7 @@ public class Main {
         if(!comprobaciones.validarDni(dni)){
             System.out.println("El DNI del titular no es valido.");
             return;
-        } else System.out.println("El DNI del titular es correcto.");
+        }
         Persona titular = new Persona(nombre, apellidos, dni);
 
         try {
@@ -74,7 +74,7 @@ public class Main {
             if(!comprobaciones.validarIban(iban)){
                 System.out.println("IBAN no válido.");
                 return;
-            } else System.out.println("IBAN válido.");
+            }
 
             System.out.println("Seleccione el tipo de cuenta que quiere abrir:");
             System.out.println("1. Cuenta de ahorro \n" + "2. Cuenta corriente personal \n" + "3. Cuenta corriente empresa");
