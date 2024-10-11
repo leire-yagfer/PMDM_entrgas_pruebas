@@ -47,7 +47,8 @@ public class Main {
                 }//switch
             } while (opcion != 7);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            sc.nextLine(); //reinicio el scanner para que no se me salga del bucle del principio
+            System.out.println("Error. Se han introducido datos erróneos. Inténtelo de nuevo."); //se sale del programa porque no está dentro de un bucle este try-catch como el de abajo (el de abrirCuenta)
         }//try-catch
     }//main
 
@@ -125,7 +126,7 @@ public class Main {
             banco.abrirCuenta(nuevaCuenta); //llamo al método para que compruebe todos los datos introducidos y abra la cuenta o saque error de apertura
         } catch (Exception e) {
             sc.nextLine(); //reinicio el scanner para que no se me salga del bucle del principio
-            System.out.println("Error. Se han introducido datos erróneos. Inténtelo de nuevo.");
+            System.out.println("Error. Se han introducido datos erróneos. Inténtelo de nuevo."); //me vuelve a reiniciar el bucle porque estoy llamando al método desde el menú principal
         }//try-catch
     }//abrirNuevaCuenta
 
