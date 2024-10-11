@@ -51,5 +51,4 @@ public class comprobaciones {
         //expresión regular para validar el DNI tenga (8 dígitos seguidos de una letra) --> buscado en internet
         return dni.matches("\\d{8}[A-Z]");
     }//validarDni
-
 }//class

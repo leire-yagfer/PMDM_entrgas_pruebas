@@ -19,8 +19,8 @@ public class Banco {
     //método para abrir una nueva cuenta bancaria
     public boolean abrirCuenta(CuentaBancaria cuentaB) {
         //verifico si la cuenta ya existe
-        for (CuentaBancaria cb : cuentas) {
-            if (cb.getIban().equals(cuentaB.getIban())) { //igualo el IBAN que se introduce con los que hay en la lista ya
+        for (CuentaBancaria c : cuentas) {
+            if (c.getIban().equals(cuentaB.getIban())) { //igualo el IBAN que se introduce con los que hay en la lista ya
                 System.out.println("Error al abrir la cuenta. Ese IBAN ya está en uso. Intenélo de nuevo.");
                 return false; //si el IBAN ya existe, no se añade la cuenta
             }
@@ -70,11 +70,11 @@ public class Banco {
     }//ingresoCuenta
 
 
-    //método para retirar dinero de una cuenta
+    //método para retirar dinero de una cuenta conociendo el IBAN
     public void retirarEfectivo(String iban, double cantidad) {
         for (CuentaBancaria c : cuentas) {
             if (c.getIban().equals(iban)) { //compruebo que existe y coincide el IBAN
-                if (c.retirar(cantidad)) { // intenta retirar
+                if (c.retirar(cantidad)) { //intenta retirar
                     System.out.println("Retirada realizada con éxito.");
                 } else {
                     System.out.println("Error al realizar la retirada. Verifique el saldo.");
@@ -86,7 +86,7 @@ public class Banco {
     }//retiradaCuenta
 
 
-    //método para obtener el saldo de una cuenta específica
+    //método para obtener el saldo de una cuenta específica conociendo el IBAN
     public double obtenerSaldo(String iban) {
         for (CuentaBancaria c : cuentas) {
             if (c.getIban().equals(iban)) { //compruebo que existe y coincide el IBAN

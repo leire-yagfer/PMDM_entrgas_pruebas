@@ -63,7 +63,7 @@ public class Main {
         System.out.print("Ingrese el DNI del titular: ");
         String dni = sc.nextLine();
         if(!comprobaciones.validarDni(dni)){
-            System.out.println("El DNI del titular no es valido.");
+            System.out.println("El DNI no es valido.");
             return;
         }
         Persona titular = new Persona(nombre, apellidos, dni);
@@ -124,7 +124,8 @@ public class Main {
 
             banco.abrirCuenta(nuevaCuenta); //llamo al método para que compruebe todos los datos introducidos y abra la cuenta o saque error de apertura
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            sc.nextLine(); //reinicio el scanner para que no se me salga del bucle del principio
+            System.out.println("Error. Se han introducido datos erróneos. Inténtelo de nuevo.");
         }//try-catch
     }//abrirNuevaCuenta
 
